@@ -35,7 +35,7 @@ async def upload_files(files: List[UploadFile] = File(description="Attorney docu
     Settings.embed_model = embed_model
     Settings.llm = MistralAI(
         api_key=mistral_api_key,
-        model='ministral-3b-latest'
+        model='mistral-large-latest'
     )
     # Get document
 
