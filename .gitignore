@@ -1,2 +1,3 @@
 .venv
 /api/src/__pycache__
+/api/src/endpoints/__pycache__
