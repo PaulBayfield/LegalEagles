@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  api:
+    hostname: legal-api
+    image: legal-api
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command: sleep infinity
+    # uvicorn main:app --host 0.0.0.0 --reload --port 8081
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./src:/app/api/src
+    deploy:
+      resources:
+        limits:
+          memory: 4096M

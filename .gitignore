@@ -1,0 +1,6 @@
+.venv
+/api/src/__pycache__
+/api/src/endpoints/__pycache__
+/api/src/logic/__pycache__
+neon/profile.json
+
