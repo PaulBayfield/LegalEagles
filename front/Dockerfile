@@ -1,24 +1,27 @@
-FROM node:22.11.0-alpine
+FROM node:22.11.0-alpine AS base
 
-# Installing pnpm
 RUN npm install -g pnpm
 
-# Copy the current directory contents into the container at /app
-COPY . /app
-
-# Remove node_modules
-RUN rm -rf /app/node_modules
-
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
+COPY package.json package-lock.json pnpm-lock.yaml . ./
+RUN pnpm install --frozen-lockfile
 
-# Install any needed packages specified in package.json
-RUN pnpm install
-
-# Build the app
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 RUN pnpm run build
 
-# Make port 3000 available to the world outside this container
+FROM base AS runner
+WORKDIR /app
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+USER nextjs
 EXPOSE 3000
-
-# Start the app
-CMD ["pnpm", "start"]
+ENV PORT 3000
+CMD ["node", "server.js"]
