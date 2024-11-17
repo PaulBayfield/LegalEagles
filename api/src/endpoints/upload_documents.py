@@ -1,7 +1,5 @@
 from typing import List
-from llama_index.core.node_parser import TokenTextSplitter
 from fastapi import  APIRouter,UploadFile, File
-import os
 from logic.document_uploader import DocumentUploader
 import logging
 from llama_index.core import SimpleDirectoryReader, StorageContext, VectorStoreIndex, Settings
@@ -17,7 +15,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/upload/")
-async def upload_files(files: List[UploadFile] = File(description="Attorney documents to upload")):
+async def upload_files(files: List[UploadFile] = File(description="Attorney documents to upload"), prompt: str = ""):
     """
     Endpoint pour uploader plusieurs fichiers.
     """
@@ -37,23 +35,12 @@ async def upload_files(files: List[UploadFile] = File(description="Attorney docu
     Settings.embed_model = embed_model
     Settings.llm = MistralAI(
         api_key=mistral_api_key,
-        model='open-mistral-nemo-latest'
+        model='ministral-3b-latest'
     )
     # Get document
 
     documents = SimpleDirectoryReader(doc_uploader.folder_root).load_data()
-    nodes_lst = await compute_nodes(documents =documents)
-    # Initialize a token splitter
-    # token_splitter = TokenTextSplitter(chunk_size=1000, chunk_overlap=200)
-
-    # # Split text nodes
-    # processed_nodes = []
-    # for node in nodes_lst:
-    #     # Assuming each node has a `text` attribute
-    #     chunks = token_splitter.split_text(node.text)
-    #     # Create nodes from each chunk and add them to the list
-    #     for chunk in chunks:
-            # processed_nodes.append(Node(text=chunk))                       
+    nodes_lst = await compute_nodes(documents =documents)                    
     logger.info('building index ...')
     
     
@@ -80,49 +67,16 @@ async def upload_files(files: List[UploadFile] = File(description="Attorney docu
     )
 
     storage_context = StorageContext.from_defaults(vector_store=vectore_store)
-    import ipdb
-    ipdb.set_trace()
     index = VectorStoreIndex( 
         nodes = nodes_lst,
         # vector store index params
         use_async = False,
         embed_model= embed_model,
-        storage_context=storage_context)
-       
-
-
-    # splitter = TokenTextSplitter(
-    # chunk_size = 70,
-    # chunk_overlap = 2,
-    # separator = " ",
-    # backup_separators = [".", "!", "?"]
-    # )
-    # nodes = splitter.get_nodes_from_documents(document)
+        storage_context=storage_context,
+        insert_batch_size=15)
     
-    
-  
-
-
-
-    
-
-    # uploaded_files_info = []
-    # # import ipdb
-    # # ipdb.set_trace()
-    # for file in files:
-    #     file_path = os.path.join(RAG_FOLDER, file.filename)
+    rag = index.as_query_engine()
+    prompt = prompt
+    response = rag.query(prompt).response    
         
-    #     try:
-    #         # Sauvegarder le fichier
-    #         with open(file_path, "wb") as buffer:
-    #             shutil.copyfileobj(file.file, buffer)
-            
-    #         uploaded_files_info.append({
-    #             "filename": file.filename,
-    #             "content_type": file.content_type,
-    #             "path": file_path,
-    #         })
-    #     except Exception as e:
-    #         raise HTTPException(status_code=500, detail=f"Erreur lors de l'upload du fichier {file.filename}: {str(e)}")
-    
-    return None
+    return response
