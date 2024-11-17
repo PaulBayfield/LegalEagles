@@ -3,11 +3,6 @@ import { streamText } from 'ai';
 
 export const runtime = 'edge';
 
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
-}
-
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
