@@ -6,7 +6,7 @@ export default function Logo({ withText, ...props }: any) {
 	return (
 		<div className="m-0 flex items-center" {...props}>
 			<Image
-				src={`/logos/logo.png`}
+				src={`/logos/logo.webp`}
 				width={40}
 				height={40}
 				alt="Paralegal.ai Logo"
