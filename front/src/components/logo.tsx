@@ -2,7 +2,7 @@ import { ny } from "@/lib/utils";
 import React from "react";
 import Image from "next/image";
 
-export default function Logo({ withText, ...props }: any) {
+export default function Logo({ withText, ...props }: { withText?: boolean } & React.ComponentProps<"div">) {
 	return (
 		<div className="m-0 flex items-center" {...props}>
 			<Image

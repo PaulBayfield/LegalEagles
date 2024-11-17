@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { HomeIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
 
 export default function NotFoundPage() {
 	return (
@@ -8,12 +9,12 @@ export default function NotFoundPage() {
 				<h1 className="-translate-y-4 animate-fade-in text-balance bg-gradient-to-br from-black from-30% to-black/40 bg-clip-text py-6 text-5xl font-semibold leading-none tracking-tighter text-transparent opacity-0 [--animation-delay:200ms] dark:from-white dark:to-white/40 sm:text-6xl md:text-7xl lg:text-8xl">
 					Page Not Found!
 				</h1>
-				<a href="/">
+				<Link href="/">
 					<Button className="flex -translate-y-4 animate-fade-in items-center justify-center gap-1 font-medium text-white opacity-0 ease-in-out [--animation-delay:600ms] dark:text-black">
                         <HomeIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1 mr-4" />
                         <span>Back to Home</span>
 					</Button>
-				</a>
+				</Link>
 			</div>
 		</main>
 	);
