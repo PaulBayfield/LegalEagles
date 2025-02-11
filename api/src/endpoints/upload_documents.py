@@ -26,7 +26,7 @@ async def upload_files(files: List[UploadFile] = File(description="Attorney docu
    
     logging.info("setup mistral ...")
     # # Setup Mistral
-    mistral_api_key = 'BejQ8RH9xlmkNjIn6w9o6q4wYMN3La9U'
+    mistral_api_key = ''
     embed_model = MistralAIEmbedding(
         api_key=mistral_api_key,
         model_name='mistral-embed',
